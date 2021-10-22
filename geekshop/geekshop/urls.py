@@ -23,7 +23,7 @@ urlpatterns = [
     path('', views.index, name='main'),
     path('contact/', views.contact, name='contact'),
     path('products/', include('mainapp.urls', namespace='products')),
-
+    path('auth/', include('authapp.urls', namespace='auth')),
     path('admin/', admin.site.urls),
 ]
 
