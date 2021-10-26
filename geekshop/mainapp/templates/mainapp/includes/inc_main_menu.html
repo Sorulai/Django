@@ -1,3 +1,21 @@
-<li><a href="{% url 'main' %}" {% if request.resolver_match.url_name == 'main' %}class="active"{% endif %}>домой</a></li>
-<li><a href="{% url 'products:products' %}" {% if request.resolver_match.url_name == 'products' %}class="active"{% endif %}>продукты</a></li>
-<li><a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>контакты</a></li>
+<li><a href="{% url 'main' %}"
+       {% if request.resolver_match.url_name == 'main' %}class="active"{% endif %}>
+    домой
+</a></li>
+<li><a href="{% url 'products:products' %}"
+       {% if request.resolver_match.url_name == 'products' %}class="active"{% endif %}>
+    продукты
+</a></li>
+<li><a href="{% url 'contact' %}"
+       {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>
+    контакты
+</a></li>
+
+{% if user.is_authenticated %}
+    <li><a href="{% url 'auth:edit' %}">{{ user.first_name|default:'Пользователь' }}</a></li>
+    <li><a href="{% url 'auth:logout' %}">Выйти</a></li>
+{% else %}
+    <li><a href="{% url 'auth:register' %}">Регистрация</a></li>
+    <li><a href="{% url 'auth:login' %}">Войти</a></li>
+{% endif %}
+

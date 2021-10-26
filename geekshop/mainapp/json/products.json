@@ -1,0 +1,65 @@
+[
+  {
+    "category": "Дом",
+    "name": "Лампа",
+    "image": "products/product-1.jpg",
+    "price": 2500,
+    "quantity": 2
+  },
+    {
+    "category": "Офис",
+    "name": "Кресло",
+    "image": "products/product-2.jpg",
+    "price": 1020,
+    "quantity": 45
+  },
+    {
+    "category": "Классика",
+    "name": "Ваза",
+    "image": "products/product-3.jpg",
+    "price": 896,
+    "quantity": 12
+  },
+    {
+    "category": "Дом",
+    "name": "Стул",
+    "image": "products/product-4.jpg",
+    "price": 5500,
+    "quantity": 5
+  },
+    {
+    "category": "Офис",
+    "name": "Лампа",
+    "image": "products/product-11.jpg",
+    "price": 3600,
+    "quantity": 36
+  },
+    {
+    "category": "Классика",
+    "name": "Стул_2",
+    "image": "products/product-21.jpg",
+    "price": 74250,
+    "quantity": 10
+  },
+    {
+    "category": "Модерн",
+    "name": "Лампа_2",
+    "image": "products/product-31.jpg",
+    "price": 14000,
+    "quantity": 5
+  },
+    {
+    "category": "Дом",
+    "name": "Лампа_3",
+    "image": "products/product-41.jpg",
+    "price": 13500,
+    "quantity": 4
+  },
+    {
+    "category": "Дом",
+    "name": "Ступка",
+    "image": "products/product-51.jpg",
+    "price": 500,
+    "quantity": 50
+  }
+]
