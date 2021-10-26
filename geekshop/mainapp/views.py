@@ -7,7 +7,6 @@ from basketapp.models import Basket
 from mainapp.models import Product, ProductCategory
 
 
-
 def get_basket(user):
     if user.is_authenticated:
         return Basket.objects.filter(user=user)
