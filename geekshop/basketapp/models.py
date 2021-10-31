@@ -11,3 +11,17 @@ class Basket(models.Model):
     quantity = models.PositiveSmallIntegerField(default=0)
 
     add_datetime = models.DateField(auto_now_add=True)
+
+    @property
+    def products_cost(self):
+        return self.quantity * self.product.price
+
+    @property
+    def total_quantity(self):
+        _items = Basket.objects.filter(user=self.user)
+        return sum(list(map(lambda x: x.quantity, _items)))
+
+    @property
+    def total_cost(self):
+        _items = Basket.objects.filter(user=self.user)
+        return sum(list(map(lambda x: x.products_cost, _items)))
