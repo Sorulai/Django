@@ -121,6 +121,7 @@ html, body {
     height: 125px;
     margin: 15px auto;
     position: relative;
+    display: flex;
 }
 
 .product_record.not_active {
@@ -1699,4 +1700,12 @@ td:first-child {
 }
 .related-products a:hover .text{
 	display: block;
+}
+
+td img {
+    width: 200px;
+    height: 200px;
+}
+.table-title {
+    text-align: center;
 }
