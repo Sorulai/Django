@@ -1,0 +1,29 @@
+{% extends 'adminapp/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <h1>{{ object.name }}</h1>
+    <table>
+        <tr>
+            <th class="table-title">Изображение</th>
+            <th class="table-title">Категория</th>
+            <th class="table-title">Краткое описание</th>
+            <th class="table-title">Описание</th>
+            <th class="table-title">Цена</th>
+            <th class="table-title">Кол-во</th>
+            <th class="table-title">Статус</th>
+        </tr>
+        <tr>
+            <td><img src="/media/{{ object.image }}" alt="{{ object.short_desc }}"></td>
+            <td>{{ object.category }}</td>
+            <td>{{ object.short_desc }}</td>
+            <td>{{ object.description }}</td>
+            <td>{{ object.price }}</td>
+            <td>{{ object.quantity }}</td>
+            <td>{{ object.is_active }}</td>
+        </tr>
+    </table>
+
+
+{% endblock %}

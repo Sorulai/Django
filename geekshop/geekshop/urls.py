@@ -19,14 +19,15 @@ from django.contrib import admin
 from django.urls import path, include
 from mainapp import views
 
-
 urlpatterns = [
     path('', views.index, name='main'),
     path('contact/', views.contact, name='contact'),
     path('products/', include('mainapp.urls', namespace='products')),
-    path('basket/',include('basketapp.urls',namespace='basket')),
+    path('basket/', include('basketapp.urls', namespace='basket')),
     path('auth/', include('authapp.urls', namespace='auth')),
-    path('admin/', admin.site.urls),
+    path('admin/', include('adminapp.urls', namespace='adminapp')),
+
+    path('control/', admin.site.urls),
 ]
 
 if settings.DEBUG:
