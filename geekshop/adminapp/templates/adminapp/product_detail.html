@@ -1,29 +1,67 @@
 {% extends 'adminapp/base.html' %}
 {% load static %}
+{% load my_tags %}
 
 
 {% block content %}
-    <h1>{{ object.name }}</h1>
-    <table>
-        <tr>
-            <th class="table-title">Изображение</th>
-            <th class="table-title">Категория</th>
-            <th class="table-title">Краткое описание</th>
-            <th class="table-title">Описание</th>
-            <th class="table-title">Цена</th>
-            <th class="table-title">Кол-во</th>
-            <th class="table-title">Статус</th>
-        </tr>
-        <tr>
-            <td><img src="/media/{{ object.image }}" alt="{{ object.short_desc }}"></td>
-            <td>{{ object.category }}</td>
-            <td>{{ object.short_desc }}</td>
-            <td>{{ object.description }}</td>
-            <td>{{ object.price }}</td>
-            <td>{{ object.quantity }}</td>
-            <td>{{ object.is_active }}</td>
-        </tr>
-    </table>
+    {#    <h1>{{ object.name }}</h1>#}
+    {#    <table>#}
+    {#        <tr>#}
+    {#            <th class="table-title">Изображение</th>#}
+    {#            <th class="table-title">Категория</th>#}
+    {#            <th class="table-title">Краткое описание</th>#}
+    {#            <th class="table-title">Описание</th>#}
+    {#            <th class="table-title">Цена</th>#}
+    {#            <th class="table-title">Кол-во</th>#}
+    {#            <th class="table-title">Статус</th>#}
+    {#        </tr>#}
+    {#        <tr>#}
+    {#            <td><img src="/media/{{ object.image }}" alt="{{ object.short_desc }}"></td>#}
+    {#            <td>{{ object.category }}</td>#}
+    {#            <td>{{ object.short_desc }}</td>#}
+    {#            <td>{{ object.description }}</td>#}
+    {#            <td>{{ object.price }}</td>#}
+    {#            <td>{{ object.quantity }}</td>#}
+    {#            <td>{{ object.is_active }}</td>#}
+    {#        </tr>#}
+    {#    </table>#}
+    <div class="product_read">
+        <div class="product_name">
+            Продукт <strong>{{ object.category.name|title }}/{{ object.name|title }}</strong>
+        </div>
+        <img src="{{ object.image|media_for_product }}" alt="{{ object.name }}">
+        <div class="summary">
+            <b>Цена</b>
+            <p>{{ object.price }} руб</p>
+            <b>Количество</b>
+            <p>{{ object.quantity }} шт</p>
+            <b>В каталоге</b>
+            <p>{% if object.is_active %} да {% else %} нет {% endif %}</p>
+            <p>
+                <button>
+                    <a href="{% url 'adminapp:products_update' object.pk %}"> редактировать</a>
+                </button>
+            <p>
+                <button>
+                    <a href="{% url 'adminapp:products_delete' object.pk %}"> удалить</a>
+                </button>
+            <p>
+                <button>
+                    <a href="{% url 'adminapp:product_list' object.category.pk %}"> назад</a>
+                </button>
+
+            </p>
+        </div>
+    <div class="product_desc">
+        <p>краткая информация</p>
+        <p>{{ object.short_desc }}</p>
+        <p>детальная информация</p>
+        <p>{{ object.description }}</p>
+
+    </div>
+
+    </div>
+
 
 
 {% endblock %}

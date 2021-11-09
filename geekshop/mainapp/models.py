@@ -16,6 +16,13 @@ class ProductCategory(models.Model):
         verbose_name_plural = 'категория'
         ordering = ('-id',)
 
+    def delete(self):
+        if self.is_active:
+            self.is_active = False
+        else:
+            self.is_active = True
+        self.save()
+
 
 class Product(models.Model):
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, verbose_name='Категория')
@@ -29,3 +36,12 @@ class Product(models.Model):
 
     def __str__(self):
         return f'{self.name} ({self.category})'
+
+
+    def delete(self):
+        if self.is_active:
+            self.is_active = False
+        else:
+            self.is_active = True
+        self.save()
+

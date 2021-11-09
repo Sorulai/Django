@@ -1,8 +1,15 @@
-from authapp.forms import ShopUserEditForm
+from authapp.forms import ShopUserEditForm, ShopUserRegisterForm
 from authapp.models import ShopUser
 from django import forms
 
 from mainapp.models import ProductCategory, Product
+
+
+class ShopUserAdminCreateForm(ShopUserRegisterForm):
+    class Meta:
+        model = ShopUser
+        # fields = '__all__'
+        exclude = ('password',)
 
 
 class ShopUserAdminEditForm(ShopUserEditForm):
