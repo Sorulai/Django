@@ -1,5 +1,6 @@
 import random
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -39,7 +40,7 @@ def contact(request):
     return render(request, 'mainapp/contact.html', context=context)
 
 
-def products(request, pk=None):
+def products(request, pk=None, page=1):
     links_menu = ProductCategory.objects.all()
     if pk is not None:
         if pk == 0:
@@ -51,10 +52,19 @@ def products(request, pk=None):
         else:
             category_item = get_object_or_404(ProductCategory, pk=pk)
             products_list = Product.objects.filter(category__pk=pk)
+
+        paginator = Paginator(products_list, 2)
+        try:
+            products_paginator = paginator.page(page)
+        except PageNotAnInteger:
+            products_paginator = paginator.page(1)
+        except EmptyPage:
+            products_paginator = paginator.page(paginator.num_pages)
+
         context = {
             'list_menu': links_menu,
             'title': 'Продукты',
-            'products': products_list,
+            'products': products_paginator,
             'category': category_item,
             'basket': get_basket(request.user)
         }
@@ -77,7 +87,7 @@ def product(request, pk):
     context = {
         'product': get_object_or_404(Product, pk=pk),
         'basket': get_basket(request.user),
-        'links_menu':links_menu
+        'links_menu': links_menu
 
     }
-    return render(request,'mainapp/product.html', context=context)
+    return render(request, 'mainapp/product.html', context=context)
