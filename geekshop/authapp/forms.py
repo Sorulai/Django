@@ -1,3 +1,8 @@
+import hashlib
+from datetime import datetime
+
+import pytz
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from django import forms
 
@@ -49,6 +54,15 @@ class ShopUserRegisterForm(UserCreationForm):
             if data == i.get('username'):
                 raise forms.ValidationError('Такой ник уже существует')
         return data
+
+    def save(self, *args, **kwargs):
+        user = super().save(*args, **kwargs)
+        user.is_active = False
+        user.activate_key = hashlib.sha1(user.email.encode('utf-8')).hexdigest()
+        user.activate_key_expired = datetime.now(pytz.timezone(settings.TIME_ZONE))
+        user.save()
+
+        return user
 
 
 class ShopUserEditForm(UserChangeForm):
