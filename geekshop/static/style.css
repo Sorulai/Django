@@ -118,10 +118,11 @@ html, body {
 }
 
 .product_record {
-    height: 125px;
-    margin: 15px auto;
+    /*height: 125px;*/
+    /*margin: 15px auto;*/
     position: relative;
     display: flex;
+    align-items: center;
 }
 
 .product_record.not_active {

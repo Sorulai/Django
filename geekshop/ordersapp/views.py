@@ -51,8 +51,8 @@ class OrderCreateView(CreateView):
                 orderitems.instance = self.object
                 orderitems.save()
 
-        if self.object.get_total_cost() == 0:
-            self.object.delete()
+        # if self.object.total_cost() == 0:
+        #     self.object.delete()
 
         return super().form_valid(form)
 
@@ -82,8 +82,9 @@ class OrderUpdateView(UpdateView):
                 orderitems.instance = self.object
                 orderitems.save()
 
-        if self.object.get_total_cost() == 0:
-            self.object.delete()
+
+        # if self.object.total_cost() == 0:
+        #     self.object.delete()
 
         return super().form_valid(form)
 
@@ -98,7 +99,9 @@ class OrderDetailView(DetailView):
 
 
 def order_forming_complete(request, pk):
+    basket_items = Basket.objects.filter(user=request.user)
     order = Order.objects.get(pk=pk)
     order.status = Order.STATUS_SEND_TO_PROCEED
+    basket_items.delete()
     order.save()
     return HttpResponseRedirect(reverse('order:list'))

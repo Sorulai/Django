@@ -1,22 +1,41 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from mainapp.models import Product, ProductCategory
 from mainapp.services import get_hot_product, get_same_products
 
 
-def index(request):
-    context = {
-        'title': 'Главная',
-        'products': Product.objects.all()[:4],
-    }
-    return render(request, 'mainapp/index.html', context=context)
+# def index(request):
+#     context = {
+#         'title': 'Главная',
+#         'products': Product.objects.all()[:4],
+#     }
+#     return render(request, 'mainapp/index.html', context=context)
 
 
-def contact(request):
-    context = {
-        'title': 'Контакты',
-    }
-    return render(request, 'mainapp/contact.html', context=context)
+class Index(TemplateView):
+    template_name = 'mainapp/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Главная'
+        context['products'] = Product.objects.all()[:4]
+        return context
+
+
+# def contact(request):
+#     context = {
+#         'title': 'Контакты',
+#     }
+#     return render(request, 'mainapp/contact.html', context=context)
+
+
+class Contacts(TemplateView):
+    template_name = 'mainapp/contact.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Контакты'
+        return context
 
 
 class ProductsListView(ListView):
@@ -100,11 +119,23 @@ class SpecialProductsListView(ListView):
         return context_data
 
 
-def product(request, pk):
-    links_menu = ProductCategory.objects.all()
-    context = {
-        'product': get_object_or_404(Product, pk=pk),
-        'links_menu': links_menu
+# def product(request, pk):
+#     links_menu = ProductCategory.objects.all()
+#     context = {
+#         'product': get_object_or_404(Product, pk=pk),
+#         'links_menu': links_menu
+#
+#     }
+#     return render(request, 'mainapp/product.html', context=context)
 
-    }
-    return render(request, 'mainapp/product.html', context=context)
+
+class ProductListView(ListView):
+    template_name = 'mainapp/product.html'
+    model = Product
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        product_pk = self.kwargs.get('pk')
+        context_data['list_menu'] = ProductCategory.objects.all()
+        context_data['product'] = get_object_or_404(Product, pk=product_pk)
+        return context_data

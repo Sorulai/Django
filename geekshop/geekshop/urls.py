@@ -20,8 +20,8 @@ from django.urls import path, include
 from mainapp import views
 
 urlpatterns = [
-    path('', views.index, name='main'),
-    path('contact/', views.contact, name='contact'),
+    path('', views.Index.as_view(), name='main'),
+    path('contact/', views.Contacts.as_view(), name='contact'),
     path('products/', include('mainapp.urls', namespace='products')),
     path('order/', include('ordersapp.urls', namespace='order')),
     path('', include('social_django.urls', namespace='social')),

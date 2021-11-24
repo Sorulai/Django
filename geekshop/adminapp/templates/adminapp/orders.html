@@ -1,0 +1,49 @@
+{% extends 'adminapp/base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+    <div class="products_list">
+        {% for object in object_list %}
+            <div class="product_record {% if not object.is_active %}not_active{% endif %}">
+                <div class="product_name">
+                    {{ object.pk|title }}
+                </div>
+                <div class="product_name">
+                    <b>Статус заказа</b>
+                    <p> {{ object.get_status_display }}</p>
+                </div>
+                <div class="product_actions">
+                    <button>
+                        <a href={% url 'adminapp:orders_detail' object.pk %}>
+                            подробнее
+                        </a>
+                    </button>
+                    <button>
+                        <a href={% url 'adminapp:orders_update' object.pk %}>
+                            редактировать
+                        </a>
+                    </button>
+                    <button>
+                        <a href={% url 'adminapp:orders_delete' object.pk %}>
+                            {% if object.is_active %}
+                                удалить
+                            {% else %}
+                                Восcтановить
+                            {% endif %}
+                        </a>
+                    </button>
+                </div>
+                <div class="summary">
+                    <b>цена</b>
+                    <p>{{ object.total_cost }} руб</p>
+                    <b>количество товаров</b>
+                    <p>{{ object.get_total_quantity }}</p>
+                </div>
+                <div class="product_desc">
+                    {{ object.short_desc|title }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
