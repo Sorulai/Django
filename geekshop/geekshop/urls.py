@@ -23,6 +23,7 @@ urlpatterns = [
     path('', views.index, name='main'),
     path('contact/', views.contact, name='contact'),
     path('products/', include('mainapp.urls', namespace='products')),
+    path('order/', include('ordersapp.urls', namespace='order')),
     path('', include('social_django.urls', namespace='social')),
     path('basket/', include('basketapp.urls', namespace='basket')),
     path('auth/', include('authapp.urls', namespace='auth')),
