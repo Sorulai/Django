@@ -1,5 +1,7 @@
+from django.db import transaction
+from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from adminapp.forms import ShopUserAdminCreateForm, ShopCategoryAdminForm, ShopProductAdminForm, ShopUserAdminEditForm
@@ -7,6 +9,9 @@ from authapp.forms import ShopUserRegisterForm
 from authapp.models import ShopUser
 from mainapp.models import ProductCategory, Product
 from django.contrib.auth.decorators import user_passes_test
+
+from ordersapp.forms import OrderForm, OrderItemForm
+from ordersapp.models import Order, OrderItem
 
 
 class AccessMixin:
@@ -126,6 +131,54 @@ class ProductDeleteList(AccessMixin, DeleteView):
     def get_success_url(self):
         product_item = Product.objects.get(pk=self.kwargs['pk'])
         return reverse('adminapp:product_list', args=[product_item.category_id])
+
+
+class OrderListView(AccessMixin, ListView):
+    model = Order
+    template_name = 'adminapp/orders.html'
+
+    def get_queryset(self):
+        return Order.objects.all().order_by('update_at').order_by('-is_active')
+
+
+class OrderUpdateView(AccessMixin, UpdateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'adminapp/order_form.html'
+    success_url = reverse_lazy('adminapp:order_list')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        OrderFormSet = inlineformset_factory(Order, OrderItem, OrderItemForm, extra=1)
+        if self.request.POST:
+            formset = OrderFormSet(self.request.POST, instance=self.object)
+        else:
+            formset = OrderFormSet(instance=self.object)
+        context_data['orderitems'] = formset
+        return context_data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        orderitems = context['orderitems']
+
+        with transaction.atomic():
+            self.object = form.save()
+            if orderitems.is_valid():
+                orderitems.instance = self.object
+                orderitems.save()
+
+        return super().form_valid(form)
+
+
+class OrderDetailView(AccessMixin, DetailView):
+    model = Order
+    template_name = 'adminapp/order_detail.html'
+
+
+class OrderDeleteView(DeleteView):
+    model = Order
+    success_url = reverse_lazy('adminapp:order_list')
+    template_name = 'adminapp/order_delete.html'
 
 # @user_passes_test(lambda u: u.is_superuser)
 # def user_create(request):
