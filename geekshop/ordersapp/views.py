@@ -1,11 +1,15 @@
 from django.db import transaction
+from django.db.models.signals import pre_save, pre_delete
+from django.dispatch import receiver
 from django.forms import inlineformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from basketapp.models import Basket
+from mainapp.models import Product
 from ordersapp.forms import OrderItemForm
 from ordersapp.models import Order, OrderItem
 
@@ -35,6 +39,7 @@ class OrderCreateView(CreateView):
                 for num, form in enumerate(formset.forms):
                     form.initial['product'] = basket_items[num].product
                     form.initial['quantity'] = basket_items[num].quantity
+                    form.initial['price'] = basket_items[num].price
             else:
                 formset = OrderFormSet()
         context_data['orderitems'] = formset
@@ -45,15 +50,15 @@ class OrderCreateView(CreateView):
         orderitems = context['orderitems']
 
         with transaction.atomic():
+            Basket.objects.filter(user=self.request.user).delete()
             form.instance.user = self.request.user
             self.object = form.save()
             if orderitems.is_valid():
                 orderitems.instance = self.object
                 orderitems.save()
 
-        # if self.object.total_cost() == 0:
-        #     self.object.delete()
-
+        if self.object.total_cost == 0:
+            self.object.delete()
         return super().form_valid(form)
 
 
@@ -69,6 +74,9 @@ class OrderUpdateView(UpdateView):
             formset = OrderFormSet(self.request.POST, instance=self.object)
         else:
             formset = OrderFormSet(instance=self.object)
+            for form in formset.forms:
+                if form.instance.pk:
+                    form.initial['price'] = form.instance.product.price
         context_data['orderitems'] = formset
         return context_data
 
@@ -82,9 +90,8 @@ class OrderUpdateView(UpdateView):
                 orderitems.instance = self.object
                 orderitems.save()
 
-
-        # if self.object.total_cost() == 0:
-        #     self.object.delete()
+        if self.object.total_cost == 0:
+            self.object.delete()
 
         return super().form_valid(form)
 
@@ -99,9 +106,37 @@ class OrderDetailView(DetailView):
 
 
 def order_forming_complete(request, pk):
-    basket_items = Basket.objects.filter(user=request.user)
     order = Order.objects.get(pk=pk)
     order.status = Order.STATUS_SEND_TO_PROCEED
-    basket_items.delete()
     order.save()
     return HttpResponseRedirect(reverse('order:list'))
+
+
+class EditOrderPrice(View):
+
+    def get(self, request, *args, **kwargs):
+        product_pk = request.GET.get('pk')
+        if request.is_ajax():
+            product = Product.objects.filter(pk=int(product_pk)).first()
+            if product:
+                return JsonResponse({'price': product.price})
+            else:
+                return JsonResponse({'price': 0})
+
+
+@receiver(pre_save, sender=OrderItem)
+@receiver(pre_save, sender=Basket)
+def product_quantity_update_save(sender, instance, **kwargs):
+    if instance.pk:
+        instance.product.quantity -= instance.quantity - instance.get_item(instance.pk).quantity
+    else:
+        instance.product.quantity -= instance.quantity
+
+    instance.product.save()
+
+
+@receiver(pre_delete, sender=OrderItem)
+@receiver(pre_delete, sender=Basket)
+def product_quantity_update_delete(sender, instance, **kwargs):
+    instance.product.quantity += instance.quantity
+    instance.product.save()
