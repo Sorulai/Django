@@ -167,6 +167,9 @@ class OrderUpdateView(AccessMixin, UpdateView):
                 orderitems.instance = self.object
                 orderitems.save()
 
+        if self.object.total_cost == 0:
+            self.object.delete()
+
         return super().form_valid(form)
 
 
