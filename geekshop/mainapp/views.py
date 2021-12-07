@@ -44,7 +44,7 @@ class ProductsListView(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().select_related()
         category_pk = self.kwargs.get('pk')
         if category_pk != 0:
             queryset = queryset.filter(category__pk=category_pk)

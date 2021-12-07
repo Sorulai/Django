@@ -8,5 +8,5 @@ def get_hot_product():
 
 
 def get_same_products(hot_prod):
-    products_list = Product.objects.filter(category=hot_prod.category).exclude(pk=hot_prod.pk)[:3]
+    products_list = Product.objects.filter(category=hot_prod.category).exclude(pk=hot_prod.pk).select_related()[:3]
     return products_list
