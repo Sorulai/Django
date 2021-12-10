@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, TemplateView
 from mainapp.models import Product, ProductCategory
 from mainapp.services import get_hot_product, get_same_products
+from django.views.decorators.cache import cache_page
 
 
 def get_links_menu():
@@ -35,7 +36,7 @@ def get_category(pk):
 #     }
 #     return render(request, 'mainapp/index.html', context=context)
 
-
+@cache_page(3600)
 class Index(TemplateView):
     template_name = 'mainapp/index.html'
 
@@ -52,7 +53,7 @@ class Index(TemplateView):
 #     }
 #     return render(request, 'mainapp/contact.html', context=context)
 
-
+@cache_page(3600)
 class Contacts(TemplateView):
     template_name = 'mainapp/contact.html'
 
@@ -62,6 +63,7 @@ class Contacts(TemplateView):
         return context
 
 
+@cache_page(3600)
 class ProductsListView(ListView):
     template_name = 'mainapp/products_list.html'
     model = Product
@@ -152,7 +154,7 @@ class SpecialProductsListView(ListView):
 #     }
 #     return render(request, 'mainapp/product.html', context=context)
 
-
+@cache_page(3600)
 class ProductListView(ListView):
     template_name = 'mainapp/product.html'
     model = Product
