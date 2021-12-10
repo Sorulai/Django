@@ -53,7 +53,7 @@ class Index(TemplateView):
 #     }
 #     return render(request, 'mainapp/contact.html', context=context)
 
-
+@cache_page(3600)
 class Contacts(TemplateView):
     template_name = 'mainapp/contact.html'
 
