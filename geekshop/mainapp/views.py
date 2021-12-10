@@ -17,6 +17,17 @@ def get_links_menu():
     return ProductCategory.objects.filter(is_active=True).select_related()
 
 
+def get_category(pk):
+    if settings.LOW_CACHE:
+        key = f'category_{pk}'
+        category_item = cache.get(key)
+        if category_item is None:
+            category_item = get_object_or_404(ProductCategory, pk=pk)
+            cache.set(key, category_item)
+        return category_item
+    return get_object_or_404(ProductCategory, pk=pk)
+
+
 # def index(request):
 #     context = {
 #         'title': 'Главная',
@@ -31,7 +42,7 @@ class Index(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная'
-        context['products'] = Product.objects.all()[:4]
+        context['products'] = Product.objects.all()[:4].select_related()
         return context
 
 
@@ -76,7 +87,7 @@ class ProductsListView(ListView):
                 'pk': 0
             }
         else:
-            context_data['category'] = ProductCategory.objects.get(pk=category_pk)
+            context_data['category'] = get_category(category_pk)
         return context_data
 
 
