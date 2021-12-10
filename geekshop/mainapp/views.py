@@ -36,7 +36,7 @@ def get_category(pk):
 #     }
 #     return render(request, 'mainapp/index.html', context=context)
 
-@cache_page(3600)
+
 class Index(TemplateView):
     template_name = 'mainapp/index.html'
 
