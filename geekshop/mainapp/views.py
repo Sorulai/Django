@@ -53,7 +53,7 @@ class Index(TemplateView):
 #     }
 #     return render(request, 'mainapp/contact.html', context=context)
 
-@cache_page(3600)
+
 class Contacts(TemplateView):
     template_name = 'mainapp/contact.html'
 
@@ -63,7 +63,6 @@ class Contacts(TemplateView):
         return context
 
 
-@cache_page(3600)
 class ProductsListView(ListView):
     template_name = 'mainapp/products_list.html'
     model = Product
@@ -154,7 +153,7 @@ class SpecialProductsListView(ListView):
 #     }
 #     return render(request, 'mainapp/product.html', context=context)
 
-@cache_page(3600)
+
 class ProductListView(ListView):
     template_name = 'mainapp/product.html'
     model = Product
