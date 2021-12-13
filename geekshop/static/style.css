@@ -1710,3 +1710,11 @@ td img {
 .table-title {
     text-align: center;
 }
+.favorites{
+    display: none;
+    list-style: none;
+}
+.profile:hover .favorites{
+    display: block;
+}
+

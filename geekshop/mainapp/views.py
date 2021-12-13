@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, TemplateView
@@ -80,7 +81,7 @@ class ProductsListView(ListView):
         context_data = super().get_context_data(*args, **kwargs)
         category_pk = self.kwargs.get('pk')
         print(category_pk)
-        context_data['list_menu'] = get_links_menu()
+        context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
         context_data['title'] = 'Продукты'
         if category_pk == 0:
             context_data['category'] = {
@@ -88,7 +89,7 @@ class ProductsListView(ListView):
                 'pk': 0
             }
         else:
-            context_data['category'] = get_category(category_pk)
+            context_data['category'] = get_object_or_404(ProductCategory, pk=category_pk)
         return context_data
 
 
@@ -138,7 +139,7 @@ class SpecialProductsListView(ListView):
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         context_data['title'] = 'Продукты'
-        context_data['list_menu'] = get_links_menu()
+        context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
         context_data['hot_product'] = get_hot_product()
         context_data['same_products'] = get_same_products(context_data['hot_product'])
         return context_data
@@ -161,6 +162,11 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         product_pk = self.kwargs.get('pk')
-        context_data['list_menu'] = get_links_menu()
+        context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
         context_data['product'] = get_object_or_404(Product, pk=product_pk)
         return context_data
+
+
+class FavoritesList(ListView):
+    template_name = ''
+    model = User

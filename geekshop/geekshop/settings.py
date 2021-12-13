@@ -226,3 +226,4 @@ if ENV_TYPE == 'dev':
         }
     }
     LOW_CACHE = True
+

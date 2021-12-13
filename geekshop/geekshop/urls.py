@@ -21,9 +21,10 @@ from mainapp import views
 from django.views.decorators.cache import cache_page
 
 urlpatterns = [
-    path('', cache_page(3600)(views.Index.as_view()), name='main'),
-    path('contact/', cache_page(3600)(views.Contacts.as_view()), name='contact'),
+    path('', views.Index.as_view(), name='main'),
+    path('contact/', views.Contacts.as_view(), name='contact'),
     path('products/', include('mainapp.urls', namespace='products')),
+    path('favorites/', views.),
     path('order/', include('ordersapp.urls', namespace='order')),
     path('', include('social_django.urls', namespace='social')),
     path('basket/', include('basketapp.urls', namespace='basket')),
