@@ -195,19 +195,11 @@ class ReportView(AccessMixin, ListView):
     template_name = 'adminapp/report_table.html'
     model = Product
 
-    # def get_queryset(self):
-    #     queryset = super().get_queryset().select_related()
-    #     print(queryset)
-    #     return queryset
-
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         context_data['products'] = Product.objects.all().order_by('-count_sales').select_related()
         context_data['title'] = 'Отчет по продаже'
         return context_data
-
-
-
 
 # @user_passes_test(lambda u: u.is_superuser)
 # def user_create(request):

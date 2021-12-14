@@ -11,6 +11,7 @@ urlpatterns = [
     # path('product/<int:pk>/', cache_page(3600)(views.ProductListView.as_view()), name='product')
     path('product/<int:pk>/', views.ProductListView.as_view(), name='product'),
     path('favorite/<int:pk>/', views.add_favorite_product, name='add_favorite'),
+    path('delete_favorite/<int:pk>', views.delete_favorite_product, name='delete_favorite'),
     path('load/', views.load_products)
 
 

@@ -180,11 +180,10 @@ def add_favorite_product(request, pk):
     """
     if 'login' in request.META.get('HTTP_REFERER'):
         return HttpResponseRedirect(reverse('products:product', args=[pk]))
+    print(request.method)
     favorite_product = get_object_or_404(Product, pk=pk)
     user = get_object_or_404(ShopUser, pk=request.user.pk)
     create_obj = FavoritesProducts.objects.get_or_create(product=favorite_product, user=user)
-    # status = create_obj[1]
-    # favorite_obj = get_object_or_404(FavoritesProducts, pk=create_obj[0].pk)
     return HttpResponseRedirect(reverse('products:product', kwargs={'pk': pk}))
 
 
@@ -226,3 +225,13 @@ def load_products(request):
                     return Response(product_serializer.data, status=status.HTTP_201_CREATED)
                 return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+def delete_favorite_product(request, pk):
+    """
+    Удаление избранного товара из списка избранных товаров
+    :param request:
+    :param pk:
+    :return:
+    """
+    FavoritesProducts.objects.get(pk=pk).delete()
+    return HttpResponseRedirect(reverse('favorites'))
