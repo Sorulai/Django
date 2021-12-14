@@ -228,3 +228,6 @@ if ENV_TYPE == 'dev':
     }
     LOW_CACHE = True
 
+
+
+AUTH_HEADER = os.getenv('AUTH_HEADER')

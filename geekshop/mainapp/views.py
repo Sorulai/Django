@@ -218,10 +218,11 @@ def load_products(request):
     :return:
     """
     if request.method == 'POST':
-        print(request.headers)
-        for product in request.data:
-            product_serializer = ProductSerializer(data=product)
-            if product_serializer.is_valid():
-                product_serializer.save()
-                return Response(product_serializer.data, status=status.HTTP_201_CREATED)
-            return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if request.headers.get('Authorization') == settings.AUTH_HEADER:
+            for product in request.data:
+                product_serializer = ProductSerializer(data=product)
+                if product_serializer.is_valid():
+                    product_serializer.save()
+                    return Response(product_serializer.data, status=status.HTTP_201_CREATED)
+                return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
