@@ -17,8 +17,10 @@
 {% endif %}
 
 {% if user.is_authenticated %}
-    <li ><a class="profile" href="{% url 'auth:edit' %}">{{ user.first_name|default:'Пользователь' }}</a></li>
-    <li><a href="">Избранное</a></li>
+    <li class="profile"><a  href="{% url 'auth:edit' %}">{{ user.first_name|default:'Пользователь' }}</a>
+    <ul class="favorite_list"><li><a href="{% url 'favorites' %}">Избранное</a></li></ul>
+    </li>
+
     <li><a href="{% url 'order:list' %}">Заказы</a></li>
     <li><a href="{% url 'auth:logout' %}">Выйти</a></li>
 {% else %}

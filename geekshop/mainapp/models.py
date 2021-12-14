@@ -1,7 +1,8 @@
 from django.db import models
 
-
 # Create your models here.
+from authapp.models import ShopUser
+
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=64, blank=True, unique=True, verbose_name='Название')
@@ -43,3 +44,8 @@ class Product(models.Model):
         else:
             self.is_active = True
         self.save()
+
+
+class FavoritesProducts(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE, verbose_name='Товар')
+    user = models.ForeignKey(ShopUser, on_delete=models.CASCADE, verbose_name='Пользователь')

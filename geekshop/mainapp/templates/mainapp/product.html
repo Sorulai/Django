@@ -33,7 +33,7 @@
                 <div class="description-text">
                     <p>{{ product.short_desc }}</p>
                 </div>
-                <a href="">Добавить в избранное</a>
+                <a href="{% url 'products:add_favorite' product.pk %}">Добавить в избранное</a>
             </div>
         </div>
     </div>

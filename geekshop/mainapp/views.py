@@ -1,9 +1,12 @@
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.cache import cache
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, TemplateView
-from mainapp.models import Product, ProductCategory
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, TemplateView, DeleteView
+from django.contrib.auth.decorators import login_required
+from authapp.models import ShopUser
+from mainapp.models import Product, ProductCategory, FavoritesProducts
 from mainapp.services import get_hot_product, get_same_products
 from django.views.decorators.cache import cache_page
 
@@ -74,13 +77,11 @@ class ProductsListView(ListView):
         category_pk = self.kwargs.get('pk')
         if category_pk != 0:
             queryset = queryset.filter(category__pk=category_pk)
-        print(queryset)
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         category_pk = self.kwargs.get('pk')
-        print(category_pk)
         context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
         context_data['title'] = 'Продукты'
         if category_pk == 0:
@@ -167,6 +168,32 @@ class ProductListView(ListView):
         return context_data
 
 
+@login_required
+def add_favorite_product(request, pk):
+    if 'login' in request.META.get('HTTP_REFERER'):
+        return HttpResponseRedirect(reverse('products:product', args=[pk]))
+    favorite_product = get_object_or_404(Product, pk=pk)
+    user = get_object_or_404(ShopUser, pk=request.user.pk)
+    create_obj = FavoritesProducts.objects.get_or_create(product=favorite_product, user=user)
+    # status = create_obj[1]
+    # favorite_obj = get_object_or_404(FavoritesProducts, pk=create_obj[0].pk)
+    return HttpResponseRedirect(reverse('products:product', kwargs={'pk': pk}))
+
+
 class FavoritesList(ListView):
-    template_name = ''
-    model = User
+    template_name = 'mainapp/favorites_user_list.html'
+    model = FavoritesProducts
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related()
+        user_pk = self.request.user.pk
+        if user_pk != 0:
+            queryset = queryset.filter(user__pk=user_pk)
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        user_pk = self.request.user.pk
+        context_data['favorite_product_menu'] = FavoritesProducts.objects.filter(user__pk=user_pk).select_related()
+        context_data['title'] = 'Избранные товары'
+        return context_data

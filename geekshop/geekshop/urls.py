@@ -24,7 +24,7 @@ urlpatterns = [
     path('', views.Index.as_view(), name='main'),
     path('contact/', views.Contacts.as_view(), name='contact'),
     path('products/', include('mainapp.urls', namespace='products')),
-    path('favorites/', views.),
+    path('favorites/', views.FavoritesList.as_view(), name='favorites'),
     path('order/', include('ordersapp.urls', namespace='order')),
     path('', include('social_django.urls', namespace='social')),
     path('basket/', include('basketapp.urls', namespace='basket')),
