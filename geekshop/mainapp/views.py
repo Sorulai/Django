@@ -5,8 +5,13 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DeleteView
 from django.contrib.auth.decorators import login_required
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from authapp.models import ShopUser
 from mainapp.models import Product, ProductCategory, FavoritesProducts
+from mainapp.serializers import ProductSerializer
 from mainapp.services import get_hot_product, get_same_products
 from django.views.decorators.cache import cache_page
 
@@ -170,6 +175,9 @@ class ProductListView(ListView):
 
 @login_required
 def add_favorite_product(request, pk):
+    """
+    Добавление продукта в избранное на странице товаров
+    """
     if 'login' in request.META.get('HTTP_REFERER'):
         return HttpResponseRedirect(reverse('products:product', args=[pk]))
     favorite_product = get_object_or_404(Product, pk=pk)
@@ -181,6 +189,9 @@ def add_favorite_product(request, pk):
 
 
 class FavoritesList(ListView):
+    """
+    Вывод списка избранных продуктов у пользователя
+    """
     template_name = 'mainapp/favorites_user_list.html'
     model = FavoritesProducts
 
@@ -197,3 +208,20 @@ class FavoritesList(ListView):
         context_data['favorite_product_menu'] = FavoritesProducts.objects.filter(user__pk=user_pk).select_related()
         context_data['title'] = 'Избранные товары'
         return context_data
+
+
+@api_view(['POST'])
+def load_products(request):
+    """
+    Сохранение данных в таблицу product
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        print(request.headers)
+        for product in request.data:
+            product_serializer = ProductSerializer(data=product)
+            if product_serializer.is_valid():
+                product_serializer.save()
+                return Response(product_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
