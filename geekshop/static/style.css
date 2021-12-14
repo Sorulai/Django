@@ -199,6 +199,8 @@ html, body {
 
 .categories_list {
     margin-left: 150px;
+    display: flex;
+    flex-direction: column;
 }
 
 .categories_list .new_category {
@@ -274,7 +276,10 @@ html, body {
 }
 
 .users_list {
-    margin-left: 150px;
+    margin: 0 auto 0 150px;
+    display: flex;
+    flex-direction: column;
+
 }
 
 .users_list a {

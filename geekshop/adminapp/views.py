@@ -1,9 +1,10 @@
 from django.db import transaction
+from django.db.models import F
 from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, TemplateView
 from adminapp.forms import ShopUserAdminCreateForm, ShopCategoryAdminForm, ShopProductAdminForm, ShopUserAdminEditForm
 from authapp.forms import ShopUserRegisterForm
 from authapp.models import ShopUser
@@ -170,6 +171,12 @@ class OrderUpdateView(AccessMixin, UpdateView):
         if self.object.total_cost == 0:
             self.object.delete()
 
+        if self.object.status == 'PD':
+            orderitems_list = OrderItem.objects.filter(order__pk=self.object.pk).values()
+            for item in orderitems_list:
+                if Product.objects.get(pk=int(item['product_id'])):
+                    Product.objects.get(pk=item['product_id']).add_count_sales(item['quantity'])
+
         return super().form_valid(form)
 
 
@@ -182,6 +189,25 @@ class OrderDeleteView(DeleteView):
     model = Order
     success_url = reverse_lazy('adminapp:order_list')
     template_name = 'adminapp/order_delete.html'
+
+
+class ReportView(AccessMixin, ListView):
+    template_name = 'adminapp/report_table.html'
+    model = Product
+
+    # def get_queryset(self):
+    #     queryset = super().get_queryset().select_related()
+    #     print(queryset)
+    #     return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['products'] = Product.objects.all().order_by('-count_sales').select_related()
+        context_data['title'] = 'Отчет по продаже'
+        return context_data
+
+
+
 
 # @user_passes_test(lambda u: u.is_superuser)
 # def user_create(request):

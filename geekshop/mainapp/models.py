@@ -33,6 +33,7 @@ class Product(models.Model):
     description = models.TextField(verbose_name='Описание')
     price = models.DecimalField(decimal_places=2, max_digits=10, default=0, verbose_name='Цена')
     quantity = models.PositiveSmallIntegerField(default=0, verbose_name='Количество')
+    count_sales = models.PositiveIntegerField(default=0, verbose_name='Количество покупок')
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -45,7 +46,11 @@ class Product(models.Model):
             self.is_active = True
         self.save()
 
+    def add_count_sales(self, count):
+        self.count_sales += count
+        self.save()
+
 
 class FavoritesProducts(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE, verbose_name='Товар')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
     user = models.ForeignKey(ShopUser, on_delete=models.CASCADE, verbose_name='Пользователь')
