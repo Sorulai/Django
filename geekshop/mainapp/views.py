@@ -180,11 +180,10 @@ def add_favorite_product(request, pk):
     """
     if 'login' in request.META.get('HTTP_REFERER'):
         return HttpResponseRedirect(reverse('products:product', args=[pk]))
-    print(request.method)
     favorite_product = get_object_or_404(Product, pk=pk)
     user = get_object_or_404(ShopUser, pk=request.user.pk)
     create_obj = FavoritesProducts.objects.get_or_create(product=favorite_product, user=user)
-    return HttpResponseRedirect(reverse('products:product', kwargs={'pk': pk}))
+    return HttpResponseRedirect(reverse('products:product', kwargs={'pk': pk}), kwargs={'status': status})
 
 
 class FavoritesList(ListView):
