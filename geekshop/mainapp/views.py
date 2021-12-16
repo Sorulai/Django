@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from mainapp.tasks import get_currency_celery
 from authapp.models import ShopUser
 from mainapp.models import Product, ProductCategory, FavoritesProducts
 from mainapp.serializers import ProductSerializer
@@ -48,6 +48,9 @@ def get_category(pk):
 
 class Index(TemplateView):
     template_name = 'mainapp/index.html'
+
+    def __init__(self):
+        get_currency_celery.delay()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
