@@ -139,7 +139,7 @@ class OrderListView(AccessMixin, ListView):
     template_name = 'adminapp/orders.html'
 
     def get_queryset(self):
-        return Order.objects.all().order_by('update_at').order_by('-is_active')
+        return Order.objects.all().select_related().order_by('update_at').order_by('-is_active')
 
 
 class OrderUpdateView(AccessMixin, UpdateView):
@@ -172,7 +172,7 @@ class OrderUpdateView(AccessMixin, UpdateView):
             self.object.delete()
 
         if self.object.status == 'PD':
-            orderitems_list = OrderItem.objects.filter(order__pk=self.object.pk).values()
+            orderitems_list = OrderItem.objects.filter(order__pk=self.object.pk).select_related().values()
             for item in orderitems_list:
                 if Product.objects.get(pk=int(item['product_id'])):
                     Product.objects.get(pk=item['product_id']).add_count_sales(item['quantity'])
@@ -197,7 +197,7 @@ class ReportView(AccessMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data['products'] = Product.objects.all().order_by('-count_sales').select_related()
+        context_data['products'] = Product.objects.all().select_related().order_by('-count_sales')
         context_data['title'] = 'Отчет по продаже'
         return context_data
 

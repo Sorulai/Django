@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'mainapp',
     'authapp',
     'basketapp',
-    'ordersapp'
+    'ordersapp',
+    'report_builder'
 ]
 
 MIDDLEWARE = [
@@ -240,3 +241,4 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+REPORT_BUILDER_INCLUDE = ['mainapp.product']
