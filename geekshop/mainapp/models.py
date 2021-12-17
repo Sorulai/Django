@@ -1,7 +1,10 @@
+import decimal
+
 from django.db import models
 
 # Create your models here.
 from authapp.models import ShopUser
+from mainapp.service_currency import get_currency
 
 
 class ProductCategory(models.Model):
@@ -49,6 +52,12 @@ class Product(models.Model):
     def add_count_sales(self, count):
         self.count_sales += count
         self.save()
+
+    @property
+    def price_in_currency(self):
+        usd = get_currency()
+        usd_price = self.price / decimal.Decimal(usd)
+        return round(usd_price, 3)
 
 
 class FavoritesProducts(models.Model):

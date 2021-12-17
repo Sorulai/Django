@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from mainapp.tasks import get_currency_celery
 from authapp.models import ShopUser
+from mainapp.service_currency import get_currency
 from mainapp.models import Product, ProductCategory, FavoritesProducts
 from mainapp.serializers import ProductSerializer
 from mainapp.services import get_hot_product, get_same_products
@@ -49,13 +49,11 @@ def get_category(pk):
 class Index(TemplateView):
     template_name = 'mainapp/index.html'
 
-    def __init__(self):
-        get_currency_celery.delay()
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная'
         context['products'] = Product.objects.all()[:4].select_related()
+        context['currency'] = get_currency()
         return context
 
 
@@ -186,7 +184,7 @@ def add_favorite_product(request, pk):
     favorite_product = get_object_or_404(Product, pk=pk)
     user = get_object_or_404(ShopUser, pk=request.user.pk)
     create_obj = FavoritesProducts.objects.get_or_create(product=favorite_product, user=user)
-    return HttpResponseRedirect(reverse('products:product', kwargs={'pk': pk}), kwargs={'status': status})
+    return HttpResponseRedirect(reverse('products:product', kwargs={'pk': pk}))
 
 
 class FavoritesList(ListView):

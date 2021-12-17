@@ -1,3 +1,4 @@
+import json
 import random
 
 from django.conf import settings
@@ -15,11 +16,4 @@ def get_same_products(hot_prod):
     return products_list
 
 
-# def get_currency():
-#     url = 'https://www.cbr-xml-daily.ru/daily_json.js'
-#
-#     response = requests.get(url)
-#     value = response.json().get('Valute').get('USD').get('Value')
-#     print(value)
-#     with open('text.txt', 'w', encoding='utf8') as f:
-#         f.write(value)
+
