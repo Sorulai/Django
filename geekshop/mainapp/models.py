@@ -1,8 +1,9 @@
 import decimal
 
 from django.db import models
-
 # Create your models here.
+from model_utils import FieldTracker
+
 from authapp.models import ShopUser
 from mainapp.service_currency import get_currency
 

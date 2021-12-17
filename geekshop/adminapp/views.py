@@ -1,16 +1,15 @@
 from django.db import transaction
-from django.db.models import F
+from django.db.models.signals import post_save
 from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, TemplateView
 from adminapp.forms import ShopUserAdminCreateForm, ShopCategoryAdminForm, ShopProductAdminForm, ShopUserAdminEditForm
-from authapp.forms import ShopUserRegisterForm
+from adminapp.services import add_count_sales_product
 from authapp.models import ShopUser
 from mainapp.models import ProductCategory, Product
 from django.contrib.auth.decorators import user_passes_test
-
 from ordersapp.forms import OrderForm, OrderItemForm
 from ordersapp.models import Order, OrderItem
 
@@ -171,11 +170,7 @@ class OrderUpdateView(AccessMixin, UpdateView):
         if self.object.total_cost == 0:
             self.object.delete()
 
-        if self.object.status == 'PD':
-            orderitems_list = OrderItem.objects.filter(order__pk=self.object.pk).select_related().values()
-            for item in orderitems_list:
-                if Product.objects.get(pk=int(item['product_id'])):
-                    Product.objects.get(pk=item['product_id']).add_count_sales(item['quantity'])
+        add_count_sales_product(self.object)
 
         return super().form_valid(form)
 

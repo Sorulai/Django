@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import signals
 from django.db.models.signals import pre_save, pre_delete, post_save
 from django.dispatch import receiver
 from django.forms import inlineformset_factory
@@ -140,8 +141,3 @@ def product_quantity_update_save(sender, instance, **kwargs):
 def product_quantity_update_delete(sender, instance, **kwargs):
     instance.product.quantity += instance.quantity
     instance.product.save()
-
-
-
-
-

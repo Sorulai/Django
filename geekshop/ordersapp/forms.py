@@ -17,8 +17,6 @@ class OrderForm(forms.ModelForm):
 
 
 
-
-
 class OrderItemForm(forms.ModelForm):
     price = forms.CharField(label='Цена', required=False)
 
@@ -33,4 +31,3 @@ class OrderItemForm(forms.ModelForm):
             field.help_text = ''
 
         self.fields['product'].queryset = Product.objects.filter(is_active=True).select_related()
-
