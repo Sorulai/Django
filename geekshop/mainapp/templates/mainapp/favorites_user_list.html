@@ -23,7 +23,7 @@
                 {% for product in object_list %}
                     {% if product.product.is_active %}
                     <div class="block">
-                        <a class="delete-favorite" href="{% url 'products:delete_favorite' product.pk %}"><img class="delete-favorite-img" src="{% static 'img/x.png' %}" alt=""></a>
+                        <a class="delete-favorite" href="{% url 'products:favorite:delete_favorite' product.pk %}"><img class="delete-favorite-img" src="{% static 'img/x.png' %}" alt=""></a>
                         <a class="favorite-a" href="{% url 'products:product' product.product.pk %}">
                             <img src="{{ product.product.image|media_for_product }}" alt="product">
                             <div class="text">

@@ -381,7 +381,7 @@ html, body {
 .admin_menu ul.menu {
     display: block;
     float: none;
-    width: 550px;
+    width: 700px;
     height: 50px;
     margin: auto;
     color: #555;
@@ -1892,4 +1892,29 @@ td img {
 
 .profile:hover .favorite_list {
     display: block;
+}
+
+.btn-favorite-form {
+    border: none;
+    outline: none;
+    background: none;
+    color: white;
+    border-radius: 10px;
+    width: 200px;
+    height: 30px;
+}
+
+.btn-favorite-form-remove {
+    background-color: #F55D62;
+    color: white;
+}
+
+.btn-favorite-form-add {
+    background-color: #30C940;
+
+}
+
+.favorite-btn {
+    display: flex;
+    justify-content: space-around;
 }

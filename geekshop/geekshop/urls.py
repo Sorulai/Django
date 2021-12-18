@@ -25,13 +25,11 @@ urlpatterns = [
     path('', views.Index.as_view(), name='main'),
     path('contact/', views.Contacts.as_view(), name='contact'),
     path('products/', include('mainapp.urls', namespace='products')),
-    path('favorites/', views.FavoritesList.as_view(), name='favorites'),
     path('order/', include('ordersapp.urls', namespace='order')),
     path('', include('social_django.urls', namespace='social')),
     path('basket/', include('basketapp.urls', namespace='basket')),
     path('auth/', include('authapp.urls', namespace='auth')),
     path('admin/', include('adminapp.urls', namespace='adminapp')),
-    url(r'^report_builder/', include('report_builder.urls')),
 
     path('control/', admin.site.urls),
 ]

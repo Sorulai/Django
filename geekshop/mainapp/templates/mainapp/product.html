@@ -34,7 +34,14 @@
                 <div class="description-text">
                     <p>{{ product.short_desc }}</p>
                 </div>
-                    <a href="{% url 'products:add_favorite' product.pk %}">Добавить в избранного</a>
+                <div class="favorite-btn">
+                    {% include 'mainapp/includes/inc_add_favorite_form.html' %}
+                            {% include 'mainapp/includes/inc_remove_favorite.html' %}
+                </div>
+
+
+
+
             </div>
         </div>
     </div>

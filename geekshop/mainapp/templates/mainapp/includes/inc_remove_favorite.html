@@ -1,0 +1,14 @@
+{% if request.session.favorite %}
+    {% for i in request.session.favorite %}
+        {% if i.user == request.user.pk and i.product == product.pk %}
+
+            <form action="{% url 'products:favorite:remove_favorite' product.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-favorite-form btn-favorite-form-remove">Удалить из избранного
+                </button>
+            </form>
+
+
+        {% endif %}
+    {% endfor %}
+{% endif %}

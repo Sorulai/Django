@@ -1,0 +1,4 @@
+<form action="{% url 'products:favorite:add_favorite' product.pk %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-favorite-form btn-favorite-form-add" >Добавить в избранное</button>
+</form>

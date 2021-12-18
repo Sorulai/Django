@@ -1,19 +1,14 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, TemplateView, DeleteView
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, TemplateView
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from authapp.models import ShopUser
 from mainapp.service_currency import get_currency
-from mainapp.models import Product, ProductCategory, FavoritesProducts
+from mainapp.models import Product, ProductCategory
 from mainapp.serializers import ProductSerializer
 from mainapp.services import get_hot_product, get_same_products
-from django.views.decorators.cache import cache_page
 
 
 def get_links_menu():
@@ -174,41 +169,6 @@ class ProductListView(ListView):
         return context_data
 
 
-@login_required
-def add_favorite_product(request, pk):
-    """
-    Добавление продукта в избранное на странице товаров
-    """
-    if 'login' in request.META.get('HTTP_REFERER'):
-        return HttpResponseRedirect(reverse('products:product', args=[pk]))
-    favorite_product = get_object_or_404(Product, pk=pk)
-    user = get_object_or_404(ShopUser, pk=request.user.pk)
-    create_obj = FavoritesProducts.objects.get_or_create(product=favorite_product, user=user)
-    return HttpResponseRedirect(reverse('products:product', kwargs={'pk': pk}))
-
-
-class FavoritesList(ListView):
-    """
-    Вывод списка избранных продуктов у пользователя
-    """
-    template_name = 'mainapp/favorites_user_list.html'
-    model = FavoritesProducts
-
-    def get_queryset(self):
-        queryset = super().get_queryset().select_related()
-        user_pk = self.request.user.pk
-        if user_pk != 0:
-            queryset = queryset.filter(user__pk=user_pk)
-        return queryset
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super().get_context_data(*args, **kwargs)
-        user_pk = self.request.user.pk
-        context_data['favorite_product_menu'] = FavoritesProducts.objects.filter(user__pk=user_pk).select_related()
-        context_data['title'] = 'Избранные товары'
-        return context_data
-
-
 @api_view(['POST'])
 def load_products(request):
     """
@@ -224,14 +184,3 @@ def load_products(request):
                     product_serializer.save()
                     return Response(product_serializer.data, status=status.HTTP_201_CREATED)
                 return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-def delete_favorite_product(request, pk):
-    """
-    Удаление избранного товара из списка избранных товаров
-    :param request:
-    :param pk:
-    :return:
-    """
-    FavoritesProducts.objects.get(pk=pk).delete()
-    return HttpResponseRedirect(reverse('favorites'))

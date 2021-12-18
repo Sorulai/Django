@@ -1,7 +1,6 @@
 from django.db import transaction
-from django.db.models.signals import post_save
 from django.forms import inlineformset_factory
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, TemplateView
@@ -187,6 +186,9 @@ class OrderDeleteView(DeleteView):
 
 
 class ReportView(AccessMixin, ListView):
+    """
+    Вывод отчета в админку
+    """
     template_name = 'adminapp/report_table.html'
     model = Product
 

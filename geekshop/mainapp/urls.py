@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from mainapp import views
 from django.views.decorators.cache import cache_page
 
@@ -10,8 +10,7 @@ urlpatterns = [
     path('category/<int:pk>/', views.ProductsListView.as_view(), name='category'),
     # path('product/<int:pk>/', cache_page(3600)(views.ProductListView.as_view()), name='product')
     path('product/<int:pk>/', views.ProductListView.as_view(), name='product'),
-    path('favorite/<int:pk>/', views.add_favorite_product, name='add_favorite'),
-    path('delete_favorite/<int:pk>', views.delete_favorite_product, name='delete_favorite'),
+    path('favorite/', include('favorite.urls', namespace='favorite')),
     path('load/', views.load_products)
 
 
