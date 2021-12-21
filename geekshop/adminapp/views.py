@@ -1,15 +1,14 @@
 from django.db import transaction
 from django.forms import inlineformset_factory
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, TemplateView
 from adminapp.forms import ShopUserAdminCreateForm, ShopCategoryAdminForm, ShopProductAdminForm, ShopUserAdminEditForm
-from authapp.forms import ShopUserRegisterForm
+from adminapp.services import add_count_sales_product
 from authapp.models import ShopUser
 from mainapp.models import ProductCategory, Product
 from django.contrib.auth.decorators import user_passes_test
-
 from ordersapp.forms import OrderForm, OrderItemForm
 from ordersapp.models import Order, OrderItem
 
@@ -138,7 +137,7 @@ class OrderListView(AccessMixin, ListView):
     template_name = 'adminapp/orders.html'
 
     def get_queryset(self):
-        return Order.objects.all().order_by('update_at').order_by('-is_active')
+        return Order.objects.all().select_related().order_by('update_at').order_by('-is_active')
 
 
 class OrderUpdateView(AccessMixin, UpdateView):
@@ -170,6 +169,8 @@ class OrderUpdateView(AccessMixin, UpdateView):
         if self.object.total_cost == 0:
             self.object.delete()
 
+        add_count_sales_product(self.object)
+
         return super().form_valid(form)
 
 
@@ -182,6 +183,20 @@ class OrderDeleteView(DeleteView):
     model = Order
     success_url = reverse_lazy('adminapp:order_list')
     template_name = 'adminapp/order_delete.html'
+
+
+class ReportView(AccessMixin, ListView):
+    """
+    Вывод отчета в админку
+    """
+    template_name = 'adminapp/report_table.html'
+    model = Product
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['products'] = Product.objects.all().select_related().order_by('-count_sales')
+        context_data['title'] = 'Отчет по продаже'
+        return context_data
 
 # @user_passes_test(lambda u: u.is_superuser)
 # def user_create(request):

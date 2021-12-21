@@ -1,0 +1,25 @@
+{% include 'adminapp/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="products_list">
+        <table>
+            <thead>
+            <tr>
+                <th>id продукта</th>
+                <th>Название продукта</th>
+                <th>Кол-во покупок продукта</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in products %}
+                <tr>
+                    <td>{{ i.pk }}</td>
+                    <td>{{ i.name }}</td>
+                    <td>{{ i.count_sales }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

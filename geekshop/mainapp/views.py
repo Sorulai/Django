@@ -1,11 +1,14 @@
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from mainapp.service_currency import get_currency
 from mainapp.models import Product, ProductCategory
+from mainapp.serializers import ProductSerializer
 from mainapp.services import get_hot_product, get_same_products
-from django.views.decorators.cache import cache_page
 
 
 def get_links_menu():
@@ -45,6 +48,7 @@ class Index(TemplateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная'
         context['products'] = Product.objects.all()[:4].select_related()
+        context['currency'] = get_currency()
         return context
 
 
@@ -74,13 +78,11 @@ class ProductsListView(ListView):
         category_pk = self.kwargs.get('pk')
         if category_pk != 0:
             queryset = queryset.filter(category__pk=category_pk)
-        print(queryset)
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         category_pk = self.kwargs.get('pk')
-        print(category_pk)
         context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
         context_data['title'] = 'Продукты'
         if category_pk == 0:
@@ -167,6 +169,18 @@ class ProductListView(ListView):
         return context_data
 
 
-class FavoritesList(ListView):
-    template_name = ''
-    model = User
+@api_view(['POST'])
+def load_products(request):
+    """
+    Сохранение данных в таблицу product
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        if request.headers.get('Authorization') == settings.AUTH_HEADER:
+            for product in request.data:
+                product_serializer = ProductSerializer(data=product)
+                if product_serializer.is_valid():
+                    product_serializer.save()
+                    return Response(product_serializer.data, status=status.HTTP_201_CREATED)
+                return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

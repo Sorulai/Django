@@ -42,11 +42,14 @@ INSTALLED_APPS = [
     'social_django',
     'debug_toolbar',
     'template_profiler_panel',
+    'rest_framework',
     'adminapp',
     'mainapp',
     'authapp',
     'basketapp',
-    'ordersapp'
+    'ordersapp',
+    'report_builder',
+    'favorite'
 ]
 
 MIDDLEWARE = [
@@ -227,3 +230,16 @@ if ENV_TYPE == 'dev':
     }
     LOW_CACHE = True
 
+AUTH_HEADER = os.getenv('AUTH_HEADER')
+
+# Redis-Celery
+REDIS_HOST = '0.0.0.0'
+REDIS_PORT = '6379'
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+REPORT_BUILDER_INCLUDE = ['mainapp.product']

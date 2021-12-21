@@ -2,6 +2,10 @@ from django.conf import settings
 from django.db import models
 
 # Create your models here.
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+from model_utils import FieldTracker
+
 from mainapp.models import Product
 
 
@@ -30,6 +34,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
+
     @property
     def get_total_quantity(self):
         _items = self.orderitems.select_related()
@@ -39,6 +44,9 @@ class Order(models.Model):
     def total_cost(self):
         _items = self.orderitems.select_related()
         return sum(list(map(lambda x: x.products_cost, _items)))
+
+
+
 
     # def delete(self, *args, **kwargs):
     #     for item in self.orderitems.select_related():

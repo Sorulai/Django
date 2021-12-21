@@ -43,13 +43,13 @@
                 <h3 class="big-bold">{{ hot_product.name }}</h3>
                 <h3 class="red">горячее предложение</h3>
                 <p class="price"> {{ hot_product.price|floatformat:2 }} <span>руб</span></p>
+                <p class="price"> {{ hot_product.price_in_currency }} <span>&#36;</span></p>
                 <a href="{% url 'basket:add' hot_product.pk %}" class="red-button">
                     заказать <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
                 <div class="description-text">
                   <p>{{ hot_product.short_desc }}</p>
                 </div>
-                <a href="">Добавить в избранное</a>
             </div>
         </div>
 

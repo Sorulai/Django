@@ -1,7 +1,12 @@
+import decimal
+
 from django.db import models
-
-
 # Create your models here.
+from model_utils import FieldTracker
+
+from authapp.models import ShopUser
+from mainapp.service_currency import get_currency
+
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=64, blank=True, unique=True, verbose_name='Название')
@@ -32,6 +37,7 @@ class Product(models.Model):
     description = models.TextField(verbose_name='Описание')
     price = models.DecimalField(decimal_places=2, max_digits=10, default=0, verbose_name='Цена')
     quantity = models.PositiveSmallIntegerField(default=0, verbose_name='Количество')
+    count_sales = models.PositiveIntegerField(default=0, verbose_name='Количество покупок')
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -43,3 +49,16 @@ class Product(models.Model):
         else:
             self.is_active = True
         self.save()
+
+    def add_count_sales(self, count):
+        self.count_sales += count
+        self.save()
+
+    @property
+    def price_in_currency(self):
+        usd = get_currency()
+        usd_price = self.price / decimal.Decimal(usd)
+        return round(usd_price, 3)
+
+
+

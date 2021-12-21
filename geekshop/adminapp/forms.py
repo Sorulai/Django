@@ -30,6 +30,7 @@ class ShopCategoryAdminForm(forms.ModelForm):
             field.help_text = ''
 
 
+
 class ShopProductAdminForm(forms.ModelForm):
     class Meta:
         model = Product
