@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import F
 from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -75,6 +76,11 @@ class CategoryUpdateList(AccessMixin, UpdateView):
     def form_valid(self, form):
         if 'discount' in form.cleaned_data:
             discount = form.cleaned_data.get('discount')
+            if discount:
+                self.object.product_set.update(
+                    price=F('price') * (1 - discount/100)
+                )
+        return super().form_valid(form)
 
 
 class CategoryDeleteList(AccessMixin, DeleteView):
