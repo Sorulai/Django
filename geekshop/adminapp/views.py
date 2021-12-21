@@ -72,6 +72,10 @@ class CategoryUpdateList(AccessMixin, UpdateView):
     def get_success_url(self):
         return reverse('adminapp:category_list')
 
+    def form_valid(self, form):
+        if 'discount' in form.cleaned_data:
+            discount = form.cleaned_data.get('discount')
+
 
 class CategoryDeleteList(AccessMixin, DeleteView):
     model = ProductCategory

@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.template.loader import render_to_string
@@ -22,7 +23,7 @@ def add(request, pk):
     if not basket_item:
         basket_item = Basket(product=product_item, user=request.user)
 
-    basket_item.quantity += 1
+    basket_item.quantity += F('quantity') + 1
     basket_item.save()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
