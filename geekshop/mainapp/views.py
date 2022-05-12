@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView
 from rest_framework import status
@@ -47,7 +48,11 @@ class Index(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная'
-        context['products'] = Product.objects.all()[:4].select_related()
+        is_home = Q(category__name='Дом')
+        is_office = Q(category__name='Офис')
+        context['products'] = Product.objects.filter(
+            is_home | is_office
+        )
         context['currency'] = get_currency()
         return context
 
@@ -77,13 +82,13 @@ class ProductsListView(ListView):
         queryset = super().get_queryset().select_related()
         category_pk = self.kwargs.get('pk')
         if category_pk != 0:
-            queryset = queryset.filter(category__pk=category_pk)
+            queryset = queryset.filter(Q(category__pk=category_pk))
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         category_pk = self.kwargs.get('pk')
-        context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
+        context_data['list_menu'] = ProductCategory.objects.filter(Q(is_active=True)).select_related()
         context_data['title'] = 'Продукты'
         if category_pk == 0:
             context_data['category'] = {
@@ -141,7 +146,7 @@ class SpecialProductsListView(ListView):
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         context_data['title'] = 'Продукты'
-        context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
+        context_data['list_menu'] = ProductCategory.objects.filter(Q(is_active=True)).select_related()
         context_data['hot_product'] = get_hot_product()
         context_data['same_products'] = get_same_products(context_data['hot_product'])
         return context_data
@@ -164,7 +169,7 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         product_pk = self.kwargs.get('pk')
-        context_data['list_menu'] = ProductCategory.objects.filter(is_active=True).select_related()
+        context_data['list_menu'] = ProductCategory.objects.filter(Q(is_active=True)).select_related()
         context_data['product'] = get_object_or_404(Product, pk=product_pk)
         return context_data
 

@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.signals import pre_save, pre_delete, post_save
 from django.dispatch import receiver
 from django.forms import inlineformset_factory
@@ -17,7 +18,7 @@ class OrderListView(ListView):
     model = Order
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(Q(user=self.request.user))
 
 
 class OrderCreateView(CreateView):
