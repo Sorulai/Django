@@ -182,6 +182,7 @@ def load_products(request):
     :return:
     """
     if request.method == 'POST':
+        print(request)
         if request.headers.get('Authorization') == settings.AUTH_HEADER:
             for product in request.data:
                 product_serializer = ProductSerializer(data=product)
