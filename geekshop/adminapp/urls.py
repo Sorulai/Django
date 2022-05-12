@@ -24,8 +24,4 @@ urlpatterns = [
     path('orders/update/<int:pk>/', views.OrderUpdateView.as_view(), name='orders_update'),
     path('orders/delete/<int:pk>', views.OrderDeleteView.as_view(), name='orders_delete'),
     path('orders/detail/<int:pk>/', views.OrderDetailView.as_view(), name='orders_detail'),
-
-    path('report/', views.ReportView.as_view(), name='report'),
-    url(r'^report_builder/', include('report_builder.urls')),
-
 ]
